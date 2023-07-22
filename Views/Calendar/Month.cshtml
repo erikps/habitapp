@@ -1,0 +1,29 @@
+@model IEnumerable<habitapp.Models.Habit>
+
+@{
+    ViewData["Title"] = "Month View";
+}
+
+
+<h1>Month View</h1>
+
+<a asp-action="Week">Week View</a>
+
+<div class="d-flex flex-wrap w-75">
+    @for (int i = 0; i < ViewBag.days; i++)
+    {
+        var isToday = i == ViewBag.today.Day;
+        var background = isToday ? "bg-primary text-white font-weight-bold" : "";
+
+        <div style="width: 4em; height: 4em" class="m-1 border border-1 text-center  @background">
+            @if (isToday)
+            {
+                <b >
+                    @i
+                </b>
+            } else {
+                @i
+            }
+        </div>
+    }
+</div>

@@ -1,4 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using habitapp.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<HabitContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("HabitContext") ?? throw new InvalidOperationException("Connection string 'HabitContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
