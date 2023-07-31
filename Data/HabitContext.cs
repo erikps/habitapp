@@ -15,5 +15,6 @@ namespace habitapp.Data
         }
 
         public DbSet<habitapp.Models.Habit> Habit { get; set; } = default!;
+        public DbSet<habitapp.Models.HabitCompletion> HabitCompletions { get; set; } = default!;
     }
 }

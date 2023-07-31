@@ -27,8 +27,13 @@
                 <input asp-for="Interval" class="form-control" />
                 <span asp-validation-for="Interval" class="text-danger"></span>
             </div>
+            <div class="form-group mb-2">
+                <label asp-for="startDate" class="control-label"></label>
+                <input asp-for="startDate" value="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" />
+                <span asp-validation-for="startDate" class="text-danger"></span>
+            </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary mb-2" />
             </div>
         </form>
     </div>

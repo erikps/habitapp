@@ -1,5 +1,6 @@
 using System.Globalization;
 using habitapp.Data;
+using habitapp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,7 +31,7 @@ namespace habitapp.Controllers
             ViewBag.days = days;
             ViewBag.today = today;
 
-            var habits = await _context.Habit.ToListAsync();
+            var habits = await _context.Habit.Include((Habit habit) => habit.CompletionHistory).ToListAsync();
             return View(habits);
         }
 

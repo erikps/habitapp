@@ -1,0 +1,33 @@
+@model IEnumerable<Habit>
+
+@{
+    ViewData["Title"] = "Dashboard";
+
+    bool isCompleted (Habit habit) {
+        return habit.CompletionHistory.Any((HabitCompletion completion) => completion.CompletedOn == DateTime.Today);
+    }
+}
+
+<h1 class="display-6">Dashboard </h1>
+
+<div class="d=flex flex-column container">
+    @foreach (var habit in Model)
+    {
+        <div>
+            <div class="form-check">
+                <input onclick="handleCompletion(@habit.id)" id="habit-@habit.id" class="form-check-input" type="checkbox" checked="@isCompleted(habit)"/>
+                <label for="habit-@habit.id" class="form-check-label"><b>@habit.Name</b></label>
+            </div>
+            <p>@habit.Description</p>
+        </div>
+   }
+</div>
+
+<script>
+    function handleCompletion(habitId) {
+        let completed = $("#habit-" + habitId).is(":checked");
+        fetch(`/Habit/DashboardSubmit/${habitId}?completed=${completed}`, { method: "POST" });
+    }
+</script>
+
+

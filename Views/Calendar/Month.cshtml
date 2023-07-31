@@ -2,28 +2,53 @@
 
 @{
     ViewData["Title"] = "Month View";
+
+    var firstDayOfMonth = DateTime.Today.AddDays(-(int)DateTime.Today.Day + 1);
+    var numberOfHabits = Model.Count();
+
 }
 
+<span class="d-flex align-items-center">
+    <h1 class="me-4 display-6">Month View</h1> <a asp-action="Week">Week View</a>
+</span>
 
-<h1>Month View</h1>
+<h3 class="fw-light">
+    @DateTime.Today.ToString("MMMM yyyy")
+</h3>
 
-<a asp-action="Week">Week View</a>
-
-<div class="d-flex flex-wrap w-75">
-    @for (int i = 0; i < ViewBag.days; i++)
+<div class="d-flex flex-wrap">
+    @for (int i = 1; i <= ViewBag.days; i++)
     {
         var isToday = i == ViewBag.today.Day;
-        var background = isToday ? "bg-primary text-white font-weight-bold" : "";
+        var isAfterToday = i > ViewBag.today.Day;
 
-        <div style="width: 4em; height: 4em" class="m-1 border border-1 text-center  @background">
-            @if (isToday)
-            {
-                <b >
-                    @i
-                </b>
-            } else {
+        String style = "";
+
+        var day = firstDayOfMonth.AddDays(i - 1);
+        var numberOfCompletions = Model.Select((Habit habit) => habit.HasBeenCompletedOn(day)).Count(x => x);
+        var completionPercentage = (float)numberOfCompletions / (float)numberOfHabits * 100f;
+
+        if (isToday) {
+            style = "bg-secondary text-white fw-bold";
+        } else if (isAfterToday) {
+            style = "border border-1 fw-light";
+
+        } else {
+            style = "border-1 border border-secondary fw-semibold";
+        }
+
+        <a asp-action="Month" asp-fragment="@i" style="width: 4em; height: 4em" class="m-1 rounded text-center fst-underline @style">
+            <span class="fs-5">
                 @i
-            }
-        </div>
+            </span>
+            <br>
+            <span class="l-flex justify-content-center" hidden="@(isAfterToday)">
+                
+                <div class="mt-1 rounded border border-dark" style="width: 2em; height: 1em; margin: 0 auto; ">
+                   <div class="rounded" style="background-color: lightgreen; width: @completionPercentage%; height: 100%"> </div> 
+                </div>
+                @* @numberOfCompletions/@numberOfHabits *@
+            </span>
+        </a>
     }
 </div>

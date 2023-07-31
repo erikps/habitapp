@@ -22,9 +22,9 @@ namespace habitapp.Controllers
         // GET: Habit
         public async Task<IActionResult> Index()
         {
-              return _context.Habit != null ? 
-                          View(await _context.Habit.ToListAsync()) :
-                          Problem("Entity set 'HabitContext.Habit'  is null.");
+            return _context.Habit != null ?
+                        View(await _context.Habit.ToListAsync()) :
+                        Problem("Entity set 'HabitContext.Habit'  is null.");
         }
 
         // GET: Habit/Details/5
@@ -56,7 +56,7 @@ namespace habitapp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,Name,Description,Interval")] Habit habit)
+        public async Task<IActionResult> Create([Bind("id,Name,Description,Interval,startDate")] Habit habit)
         {
             if (ModelState.IsValid)
             {
@@ -150,14 +150,53 @@ namespace habitapp.Controllers
             {
                 _context.Habit.Remove(habit);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> Dashboard()
+        {
+
+            return _context.Habit != null ?
+                View(await _context.Habit.Include((Habit habit) => habit.CompletionHistory).ToListAsync()) :
+                Problem("Entity set 'HabitContext.Habit' is null.");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DashboardSubmit(int id, bool completed)
+        {
+            // This is the habit being edited
+            var habit = await _context.Habit.Include(h => h.CompletionHistory).Where((Habit habit) => habit.id == id).FirstAsync();
+
+            if (habit == null)
+            {
+                return Problem("Habit with the provided id does not exist.");
+            }
+
+
+            // If the habit has been completed, add today as a completion, otherwise remove any such completions
+            if (completed)
+            {
+                var completion = new HabitCompletion { CompletedOn = DateTime.Today };
+                habit.CompletionHistory.Add(completion);
+            }
+            else
+            {
+                // Remove any completions for today.
+                await _context.HabitCompletions
+                    .Where((HabitCompletion completion) =>
+                        habit.CompletionHistory.Contains(completion) && completion.CompletedOn == DateTime.Today)
+                    .ExecuteDeleteAsync();
+            }
+
+            await _context.SaveChangesAsync();
+            return Redirect("Habit/Dashboard");
+        }
+
         private bool HabitExists(int id)
         {
-          return (_context.Habit?.Any(e => e.id == id)).GetValueOrDefault();
+            return (_context.Habit?.Any(e => e.id == id)).GetValueOrDefault();
         }
     }
 }

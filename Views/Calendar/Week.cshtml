@@ -1,9 +1,43 @@
 @model IEnumerable<Habit>
 
 @{
+    DateTime findWeekStartDate(DateTime date) {
+        // Determine the (locale specific) first day of the week the specified date is in. 
+        const int daysInWeek = 7;
+        var weekStartDay = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+
+        if (weekStartDay > date.DayOfWeek) {
+            weekStartDay -= daysInWeek;
+        }
+
+        return date.AddDays(-(int)date.DayOfWeek + (int)weekStartDay);
+    }
+
     ViewData["Title"] = "Week View";
 
-    var today = DateTime.Today;
-    
+    var today = DateTime.Today.AddDays(0);
+    var startDay = findWeekStartDate(today);
 }
 
+<span class="d-flex align-items-center">
+    <h1 class="display-6 me-4">Week View</h1> <a asp-action="Month">Month View</a>
+</span>
+
+
+<div class="w-25 d-flex flex-column text-large">
+@for(int i = 0; i < 7; i++) {
+
+    var currentDay = startDay.AddDays(i);
+    var isToday = currentDay == today;
+    var todayStyle = isToday? "bg-primary text-white rounded" : "border-bottom border-secondary";
+
+    <div class="p-1 d-inline-flex justify-content-between  mb-2 @todayStyle">
+        <div>
+            @currentDay.ToString("ddd")
+        </div>
+        <div>
+            @currentDay.ToString("d/M/y")
+        </div>
+    </div>
+}
+</div>

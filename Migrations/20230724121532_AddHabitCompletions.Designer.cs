@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using habitapp.Data;
 
@@ -10,9 +11,11 @@ using habitapp.Data;
 namespace habitapp.Migrations
 {
     [DbContext(typeof(HabitContext))]
-    partial class HabitContextModelSnapshot : ModelSnapshot
+    [Migration("20230724121532_AddHabitCompletions")]
+    partial class AddHabitCompletions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.9");
@@ -32,9 +35,6 @@ namespace habitapp.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("startDate")
                         .HasColumnType("TEXT");
 
                     b.HasKey("id");
